@@ -1,0 +1,49 @@
+<header class="p-3 mb-3 border-bottom bg-dark">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
+          <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
+        </a>
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+          <li><a href="/dashboard" class="nav-link px-2 text-white">Overview</a></li>
+          <li><a href="#" class="nav-link px-2 text-white">Inventory</a></li>
+          <li><a href="#" class="nav-link px-2 text-white">Customers</a></li>
+          <li><a href="#" class="nav-link px-2 text-white">Products</a></li>
+        </ul>
+        
+        <div class="dropdown text-end">
+          <a href="#" class="d-block text-white text-uppercase text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+           <%= user.name %>
+          </a>
+          <p class="text-secondary mx-2" style="font-size: 10px;">Administrator</p>
+          <ul class="dropdown-menu text-small">
+            <li><a class="dropdown-item " href="#">New project...</a></li>
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutmodal">Sign out</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+<!-- logout modal -->
+<div class="modal fade py-5" tabindex="-1" id="logoutmodal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content rounded-4 shadow">
+      <div class="modal-header border-bottom-0">
+        <h1 class="modal-title fs-5 fw-bold">Prompt</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-0">
+        <p>Are you sure you want to sign out now?</p>
+      </div>
+      <div class="p-3 d-flex border-top-0">
+        <a type="button" href="/logout" class="btn btn-lg btn-primary w-100 mx-2">Confirm</a>
+        <button type="button" class="btn btn-lg btn-light w-100 mx-2" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

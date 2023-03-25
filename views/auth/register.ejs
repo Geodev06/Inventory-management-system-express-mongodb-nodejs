@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/header.ejs') -%>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-4 mx-auto mt-5">
+                <div class="card p-3">
+                    <div class="text-center">
+                        <h3>Account setup</h3>
+                        <p class="text-muted">Please complete the information below to continue.</p>
+                         <form id="form">
+                            <div class="name text-start text-error"></div>
+                             <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="floatingInput0" placeholder="name" name="name">
+                                <label for="floatingInput0">Name</label>
+                             </div>
+
+                            <div class="email text-start text-error"></div>
+                            <div class="form-floating mb-2">
+                                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email">
+                                <label for="floatingInput">Email address</label>
+                            </div>
+
+                            <div class="password text-start text-error"></div>
+                            <div class="form-floating">
+                                <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
+                                <label for="floatingPassword">Password</label>
+                            </div>
+                         <hr>
+                             <button class="w-100 btn btn-lg btn-success text-white mb-2" type="submit">Create Account</button>
+                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../partials/footer.ejs') -%>
+</body>
+
+<script>
+    const form = document.querySelector('#form')
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+
+        const nameError = document.querySelector('.name.text-error')
+        const emailError = document.querySelector('.email.text-error')
+        const passwordError = document.querySelector('.password.text-error')
+
+        nameError.textContent = ''
+        emailError.textContent = ''
+        passwordError.textContent = ''
+
+        const name = form.name.value
+        const email = form.email.value
+        const password = form.password.value
+
+        Array.from(form.elements).forEach(el => el.disabled = true)
+        
+        try {
+            const res = await fetch('/register',{
+                method: 'POST',
+                body: JSON.stringify({name, email, password}),
+                headers: { 'Content-type': 'application/json' }
+            })
+
+            const data = await res.json()
+
+        Array.from(form.elements).forEach(el => el.disabled = false)
+            if(data.user){
+                alert('Account has been created!')
+                location.assign('/dashboard')
+            }
+            if(data.errors){
+                nameError.textContent = data.errors.name
+                emailError.textContent = data.errors.email
+                passwordError.textContent = data.errors.password
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    })
+</script>
+</html>

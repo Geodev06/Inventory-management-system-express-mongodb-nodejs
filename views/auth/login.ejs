@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/header.ejs') -%>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-4 mx-auto mt-5">
+                <div class="card p-3">
+                    <div class="text-center">
+                        <h3>Login</h3>
+                         <div class="form-floating">
+                        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                        <label for="floatingInput">Email address</label>
+                        </div>
+                        <div class="form-floating">
+                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                        <label for="floatingPassword">Password</label>
+                        </div>
+                        <hr>
+                         <button class="w-100 btn btn-lg btn-primary mb-2" type="submit">Sign in</button>
+                         <a href="#" class="mt-3">Forgot password?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../partials/footer.ejs') -%>
+</body>
+</html>
