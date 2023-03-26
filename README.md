@@ -1,1 +1,2 @@
-"# mongoDB-express-jwt-boilerplate" 
+# Inventory management
+using mongodb express node
