@@ -2,6 +2,10 @@ const { Router } = require("express")
 
 const UserController = require('../controllers/userController')
 const AuthController = require('../controllers/authController')
+
+// supplier controller
+const SupplierController = require('../controllers/supplierController')
+
 const { auth, checkUser } = require('../middleware/auth')
 
 const router = Router()
@@ -12,9 +16,12 @@ router.get('*', checkUser)
 router.get('/', UserController.login)
 router.get('/register', UserController.register)
 router.get('/dashboard', auth, UserController.dashboard)
+router.get('/inventory', auth, UserController.inventory)
 router.get('/logout', UserController.logout)
 
-// request
+// user authentication
 router.post('/register', AuthController.store)
+router.post('/login', AuthController.auth)
+
 
 module.exports = router

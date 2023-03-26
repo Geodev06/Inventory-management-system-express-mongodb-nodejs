@@ -1,3 +1,4 @@
+const Supplier = require('../models/Supplier')
 // functions
 const login = (req, res) => {
     if (res.locals.user) {
@@ -12,7 +13,16 @@ const register = (req, res) => {
 
 
 const dashboard = (req, res) => {
-    res.render('layouts/dashboard', { title: 'Dashboard' })
+    res.render('pages/dashboard', { title: 'Dashboard' })
+
+}
+
+
+
+const inventory = async (req, res) => {
+
+    let suppliers = await Supplier.find({}).sort({ createdAt: -1 })
+    res.render('pages/inventory', { title: 'Inventory', suppliers: suppliers })
 
 }
 
@@ -25,5 +35,6 @@ module.exports = {
     login,
     register,
     dashboard,
+    inventory,
     logout
 }

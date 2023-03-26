@@ -8,16 +8,22 @@
                 <div class="card p-3">
                     <div class="text-center">
                         <h3>Login</h3>
-                         <div class="form-floating">
-                        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                        <label for="floatingInput">Email address</label>
-                        </div>
-                        <div class="form-floating">
-                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                        <label for="floatingPassword">Password</label>
-                        </div>
+                        <form  id="form">
+                            <div class="email text-start text-error"></div>
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email">
+                                <label for="floatingInput">Email address</label>
+                            </div>
+
+                            <div class="password text-start text-error"></div>
+                            <div class="form-floating">
+                                <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
+                                <label for="floatingPassword">Password</label>
+                            </div>
                         <hr>
                          <button class="w-100 btn btn-lg btn-primary mb-2" type="submit">Sign in</button>
+
+                        </form>
                          <a href="#" class="mt-3">Forgot password?</a>
                     </div>
                 </div>
@@ -26,4 +32,47 @@
     </div>
     <%- include('../partials/footer.ejs') -%>
 </body>
+<script>
+
+    const form = document.querySelector('#form')
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+
+        const emailError = document.querySelector('.email.text-error')
+        const passwordError = document.querySelector('.password.text-error')
+
+        emailError.textContent = ''
+        passwordError.textContent = ''
+
+        const email = form.email.value
+        const password = form.password.value
+
+        Array.from(form.elements).forEach(el => el.disabled = true)
+        
+        try {
+            const res = await fetch('/login',{
+                method: 'POST',
+                body: JSON.stringify({email, password}),
+                headers: { 'Content-type': 'application/json' }
+            })
+
+            const data = await res.json()
+
+        Array.from(form.elements).forEach(el => el.disabled = false)
+
+            if(data.user) {
+                location.assign('/dashboard')
+            }
+
+            if(data.errors) {
+                emailError.textContent = data.errors.email
+                passwordError.textContent = data.errors.password
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    })
+</script>
 </html>

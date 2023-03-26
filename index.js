@@ -2,13 +2,17 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
+const path = require('path')
+
+
 const authRoutes = require('./routes/authRoutes')
+const supplierRoutes = require('./routes/supplierRoutes')
 
 
 const app = express()
 
 // middleware
-app.use(express.static('public'))
+app.use('/', express.static(path.join(__dirname, 'public')))
 app.use(express.json())
 app.use(cookieParser())
 
@@ -27,6 +31,9 @@ mongoose.connect(DB, {
 
 
 app.use(authRoutes)
+
+app.use('/supplier', supplierRoutes)
+
 app.use((req, res, next) => {
     res.status(404)
         .render('404', { title: 'Page not found!' })
