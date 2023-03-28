@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../../partials/header.ejs') -%>
+<body class="bg-light">
+    <%- include('../../partials/nav.ejs') -%>
+
+    <div class="container">
+        <div class="row">
+           <div class="d-flex justify-content-between align-items-center">
+             <h3 class="p-3 mx-3">Inventory</h3>
+             <a href="/customer"class="btn btn-sm btn-info text-white">Back</a>
+           </div>
+              <div class="col-lg-6 mx-auto">
+                <div class="card">
+                    <h3 class="fw-bold p-3">Edit Customer information</h3>
+                    <div class="p-3">
+                      <form id="form" class="row">
+
+                          <div class="col-lg-6 mb-3">
+                                <div class="name text-start text-error"></div>
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control"  placeholder="name" name="name" value="<%= customer.name %>">
+                                    <label for="">Customer name</label>
+                                </div>
+                          </div>
+
+                           <div class="col-lg-6 mb-3">
+                                <div class="contact text-start text-error"></div>
+                                <div class="form-floating mb-2">
+                                    <input type="number" class="form-control"  placeholder="contact" name="contact" value="<%= customer.contact %>">
+                                    <label for="">Contact info</label>
+                                </div>
+                          </div>
+
+                          <div class="col-lg-12 mb-3">
+                                <div class="email text-start text-error"></div>
+                                <div class="form-floating mb-2">
+                                    <input type="email" class="form-control"  placeholder="email" name="email" value="<%= customer.email %>">
+                                    <label for="">Email</label>
+                                </div>
+                          </div>
+
+                           <div class="col-lg-12 mb-3">
+                                <div class="address text-start text-error"></div>
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control"  placeholder="add" name="address" value="<%= customer.address %>">
+                                    <label for="">Complete address</label>
+                                </div>
+                          </div>
+
+
+                          <div class="col-lg-12">
+                            <button class="btn btn-primary btn-lg text-white">Save</button>
+                          </div>
+                      </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../../partials/modal.ejs') -%>
+    <%- include('../../partials/footer.ejs') -%>
+</body>
+<script>
+
+    const form = document.querySelector('#form')
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+
+        const nameError = document.querySelector('.name.text-error')
+        const emailError = document.querySelector('.email.text-error')
+        const contactError = document.querySelector('.contact.text-error')
+        const addressError = document.querySelector('.address.text-error')
+
+        nameError.textContent = ''
+        contactError.textContent = ''
+        addressError.textContent = ''
+        emailError.textContent = ''
+
+        const name = form.name.value
+        const contact = form.contact.value
+        const email = form.email.value
+        const address = form.address.value
+
+        Array.from(form.elements).forEach(el => el.disabled = true)
+
+        try {
+            const res = await fetch('/customer/update/<%= customer.id %>',{
+                method: 'POST',
+                body: JSON.stringify({name, contact, email, address}),
+                headers: { 'Content-type': 'application/json' }
+            })
+
+            const data = await res.json()
+            Array.from(form.elements).forEach(el => el.disabled = false)
+
+            if(data.customer){
+        
+                  msgAlert('System message','Changes has been Successfully saved!')
+            }
+            if(data.errors){
+                nameError.textContent = data.errors.name
+                contactError.textContent = data.errors.contact
+                addressError.textContent = data.errors.address
+                emailError.textContent = data.errors.email
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    })
+</script>
+</html>

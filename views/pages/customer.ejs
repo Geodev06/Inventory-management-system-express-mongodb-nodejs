@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/header.ejs') -%>
+<body class="bg-light">
+  <style>
+    .is-hidden{
+      display: none;
+    }
+
+    .avatar {
+        margin-top: 10px;
+        height: 70px;
+        width: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(37, 173, 107);
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 100%;
+
+    }
+  </style>
+    <%- include('../partials/nav.ejs') -%>
+
+    <div class="container">
+        <div class="row">
+           <div class="d-flex justify-content-between align-items-center">
+             <h3 class="p-3 mx-3 fw-bold">Customers</h3>
+             <div class="d-flex">
+              <a href="/customer/create"class="btn btn-sm btn-success text-white mx-2">Add new customer</a>
+             </div>
+           </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mb-2">
+                <input type="text" class="form-control w-25 float-end" placeholder="search" onkeyup="search(this.value)">
+            </div>
+            <% customers.forEach((customer) => { %>
+                <div class="col-lg-2 mb-2 customer" data-name="<%= customer.name %>">
+                    <div class="card h-100">
+                        <div class="mb-3 p-2 d-flex justify-content-center">
+                            <div class="avatar"><span class="fs-3 text-white"><%= customer.name[0].toUpperCase() %></span></div>
+                        </div>
+                        <div class="dropdown text-center">
+                            <a href="#" class="d-block text-success text-uppercase text-wrap text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                           <%= customer.name %>
+                            </a>
+                            <p class="text-secondary mx-2" style="font-size: 10px;"><%= customer.email %></p>
+                            <ul class="dropdown-menu text-small">
+                                <li><a class="dropdown-item" href="customer/edit/<%= customer.id %>">Edit info</a></li>
+                                 <li><a class="dropdown-item" href="customer/destroy/<%= customer.id %>">Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+
+            <% if(!customers.length) { %>
+                <div class="col-lg-12">
+                    <p class="mx-5">No records found!</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+    <%- include('../partials/footer.ejs') -%>
+</body>
+<script>
+  function search(value){
+    const customer = document.querySelectorAll('.customer')
+    
+    for (let i = 0; i < customer.length; i++) {
+      // console.log(customer[i].dataset.name)
+      if(customer[i].dataset.name.includes(value.toLowerCase())){
+        customer[i].classList.remove('is-hidden')
+      }else{
+        customer[i].classList.add('is-hidden')
+      }
+    }
+  }
+</script>
+</html>

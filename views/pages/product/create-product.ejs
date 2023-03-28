@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../../partials/header.ejs') -%>
+<body class="bg-light">
+    <%- include('../../partials/nav.ejs') -%>
+
+    <div class="container">
+        <div class="row">
+           <div class="d-flex justify-content-between align-items-center">
+             <h3 class="p-3 mx-3">Product</h3>
+             <a href="/product"class="btn btn-sm btn-info text-white">Back</a>
+           </div>
+              <div class="col-lg-4 mx-auto">
+                <div class="card">
+                    <h3 class="fw-bold p-3">Add new Product</h3>
+                    <div class="p-3">
+                      <form id="form" class="row">
+
+                          <div class="col-lg-12 mb-3">
+                                <div class="name text-start text-error"></div>
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control"  placeholder="name" name="name">
+                                    <label for="">Product name</label>
+                                </div>
+                          </div>
+
+                           <div class="col-lg-12 mb-3">
+                                <div class="supplier text-start text-error"></div>
+                               <div class="form-floating mb-3">
+                                    <select name="supplier" class="form-select text-uppercase">
+                                         <option value="">Choose one</option>
+                                    <% suppliers.forEach((supplier)=> { %>
+                                        <option value="<%= supplier.id %>"><%= supplier.name %></option>
+                                    <% }) %>
+                                    </select>
+                                    <label for="select">Supplier</label>
+                                    <span class="error_security_question text-danger error-text"></span>
+                                </div>
+                          </div>
+
+                          <div class="col-lg-12 mb-3">
+                                <div class="stock text-start text-error"></div>
+                                <div class="form-floating mb-2">
+                                    <input type="number" class="form-control"  placeholder="stock" name="stock" value="1">
+                                    <label for="">Quantity stock</label>
+                                </div>
+                          </div>
+
+                           <div class="col-lg-6 mb-3">
+                                <div class="ac-price text-start text-error"></div>
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control"  placeholder="price" name="acquisition_price" value="0" id="acquisition_price">
+                                    <label for="">Product acquisition price</label>
+                                </div>
+                          </div>
+
+                           <div class="col-lg-6 mb-3">
+                                <div class="re-price text-start text-error"></div>
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control"  placeholder="price" name="retail_price" value="0" id="retail_price">
+                                    <label for="">Product retail price</label>
+                                </div>
+                          </div>
+
+
+                          <div class="col-lg-12">
+                            <button class="btn btn-primary btn-lg text-white">Save</button>
+                          </div>
+                      </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../../partials/modal.ejs') -%>
+    <%- include('../../partials/footer.ejs') -%>
+</body>
+<script>
+
+    const form = document.querySelector('#form')
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+
+        let ac_price = document.querySelector('#acquisition_price')
+         let re_price = document.querySelector('#retail_price')
+
+        if(ac_price.value !== '' && parseFloat(ac_price.value) >= 0 && re_price.value !== '' && parseFloat(re_price.value) >= 0){
+
+            const nameError = document.querySelector('.name.text-error')
+            const supplierError = document.querySelector('.supplier.text-error')
+            const stockError = document.querySelector('.stock.text-error')
+            const ac_priceError= document.querySelector('.ac-price.text-error')
+            const re_priceError= document.querySelector('.re-price.text-error')
+
+            nameError.textContent = ''
+            stockError.textContent = ''
+            ac_priceError.textContent = ''
+            supplierError.textContent = ''
+            re_priceError.textContent = ''
+
+            const name = form.name.value
+            const supplier = form.supplier.value
+            const stock = form.stock.value
+            const acquisition_price = parseFloat(form.acquisition_price.value).toFixed(2)
+            const retail_price = parseFloat(form.retail_price.value).toFixed(2)
+
+            Array.from(form.elements).forEach(el => el.disabled = true)
+
+            try {
+                const res = await fetch('/product/store',{
+                    method: 'POST',
+                    body: JSON.stringify({name, supplier, stock, acquisition_price, retail_price}),
+                    headers: { 'Content-type': 'application/json' }
+                })
+
+                const data = await res.json()
+                
+                Array.from(form.elements).forEach(el => el.disabled = false)
+
+                if(data.product){
+                    form.reset()
+                    msgAlert('System message','Product has been Successfully created!')
+                }
+                if(data.errors){
+                    nameError.textContent = data.errors.name
+                    stockError.textContent = data.errors.stock
+                    ac_priceError.textContent = data.errors.acquisition_price
+                    re_priceError.textContent = data.errors.retail_price
+                    supplierError.textContent = data.errors.supplier
+                }
+
+            } catch (error) {
+                console.log(error)
+            }
+          
+        }
+         else{
+             alert('Prices value cannot be zero!')
+         }
+        
+    })
+</script>
+</html>

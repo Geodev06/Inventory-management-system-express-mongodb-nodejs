@@ -1,6 +1,4 @@
-const Supplier = require('../models/Supplier')
-
-const jwt = require('jsonwebtoken')
+const Customer = require('../models/Customer')
 
 /**
  * resource functions 
@@ -11,10 +9,10 @@ const jwt = require('jsonwebtoken')
 
 const handleErrors = (err) => {
 
-    let errors = { name: '', contact: '', address: '' }
+    let errors = { name: '', contact: '', email: '', address: '' }
 
     // validation errors
-    if (err.message.includes('supplier validation failed') || err.message.includes('Validation failed')) {
+    if (err.message.includes('customer validation failed') || err.message.includes('Validation failed')) {
         Object.values(err.errors).forEach(({ properties }) => {
             errors[properties.path] = properties.message
         })
@@ -23,16 +21,16 @@ const handleErrors = (err) => {
     return errors
 }
 
-// store new supplier
+// store new Customer
 const store = async (req, res) => {
 
-    const { name, contact, address } = req.body
+    const { name, contact, email, address } = req.body
 
     try {
-        const supplier = await Supplier.create({ name, contact, address })
+        const customer = await Customer.create({ name, contact, email, address })
 
         res.status(201)
-            .json({ supplier })
+            .json({ customer })
     }
     catch (err) {
 
@@ -46,30 +44,30 @@ const store = async (req, res) => {
 
 const create = (req, res) => {
 
-    res.render('pages/supplier/create-supplier', { title: 'Add supplier' })
+    res.render('pages/customer/create-Customer', { title: 'Add Customer' })
 }
 
 const edit = async (req, res) => {
 
-    const supplier = await Supplier.find({ _id: req.params.id })
+    const customer = await Customer.find({ _id: req.params.id })
 
-    res.render('pages/supplier/edit-supplier', { title: 'Edit supplier', supplier: supplier[0] })
+    res.render('pages/customer/edit-Customer', { title: 'Edit Customer', customer: customer[0] })
 }
 
 const update = async (req, res) => {
 
-    const { name, contact, address } = req.body
+    const { name, contact, email, address } = req.body
 
     try {
-        const supplier = await Supplier.updateOne({ _id: req.params.id }, {
+        const customer = await Customer.updateOne({ _id: req.params.id }, {
             $set: {
-                name, contact, address
+                name, contact, email, address
             }
         }, { new: true, runValidators: true })
 
 
         res.status(201)
-            .json({ supplier })
+            .json({ customer })
     }
     catch (err) {
 
@@ -82,8 +80,8 @@ const update = async (req, res) => {
 
 const destroy = async (req, res) => {
     try {
-        const supplier = await Supplier.deleteOne({ _id: req.params.id })
-        res.redirect('/inventory')
+        const customer = await Customer.deleteOne({ _id: req.params.id })
+        res.redirect('/customer')
     }
     catch (err) {
         console.log(err)

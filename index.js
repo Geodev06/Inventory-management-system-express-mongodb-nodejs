@@ -5,8 +5,12 @@ const cookieParser = require('cookie-parser')
 const path = require('path')
 
 
+// App routes
 const authRoutes = require('./routes/authRoutes')
 const supplierRoutes = require('./routes/supplierRoutes')
+const categoryRoutes = require('./routes/categoryRoutes')
+const customerRoutes = require('./routes/customerRoutes')
+const productRoutes = require('./routes/productRoutes')
 
 
 const app = express()
@@ -26,13 +30,18 @@ const PORT = 3000
 mongoose.connect(DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-}).then((result) => app.listen(PORT))
-    .catch((err) => console.log(err))
+}).then((result) => {
+    app.listen(PORT)
+    console.log('App is running at localhost:/' + PORT)
+}).catch((err) => console.log(err))
 
 
 app.use(authRoutes)
 
 app.use('/supplier', supplierRoutes)
+app.use('/category', categoryRoutes)
+app.use('/customer', customerRoutes)
+app.use('/product', productRoutes)
 
 app.use((req, res, next) => {
     res.status(404)

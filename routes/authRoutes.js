@@ -17,6 +17,8 @@ router.get('/', UserController.login)
 router.get('/register', UserController.register)
 router.get('/dashboard', auth, UserController.dashboard)
 router.get('/inventory', auth, UserController.inventory)
+router.get('/customer', auth, UserController.customer)
+router.get('/product', auth, UserController.product)
 router.get('/logout', UserController.logout)
 
 // user authentication

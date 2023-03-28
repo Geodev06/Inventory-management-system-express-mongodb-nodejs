@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/header.ejs') -%>
+<body class="bg-light">
+  <style>
+    .is-hidden{
+      display: none;
+    }
+  </style>
+    <%- include('../partials/nav.ejs') -%>
+
+    <div class="container">
+        <div class="row">
+           <div class="d-flex justify-content-between align-items-center">
+             <h3 class="p-3 mx-3 fw-bold">Products</h3>
+             <div class="d-flex">
+              <a href="/product/create"class="btn btn-sm btn-success text-white mx-2">Create new product</a>
+             </div>
+           </div>
+           
+
+        </div>
+    </div>
+    <%- include('../partials/footer.ejs') -%>
+</body>
+<!-- <script>
+  function search(value){
+    const supplier_item = document.querySelectorAll('.supplier-item-name')
+    
+    for (let i = 0; i < supplier_item.length; i++) {
+      // console.log(supplier_item[i].dataset.name)
+      if(supplier_item[i].dataset.name.includes(value.toLowerCase())){
+        supplier_item[i].classList.remove('is-hidden')
+      }else{
+        supplier_item[i].classList.add('is-hidden')
+      }
+    }
+  }
+</script> -->
+</html>
