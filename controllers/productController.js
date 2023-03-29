@@ -1,5 +1,6 @@
 const Product = require('../models/Product')
 const Supplier = require('../models/Supplier')
+const Category = require('../models/Category')
 
 /**
  * resource functions 
@@ -13,11 +14,12 @@ const handleErrors = (err) => {
     let errors = {
         name: '',
         supplier: '',
+        category: '',
         stock: '',
         acquisition_price: '',
         retail_price: ''
     }
-    console.log(err)
+
 
     // validation errors
     if (err.message.includes('product validation failed') || err.message.includes('Validation failed')) {
@@ -32,10 +34,10 @@ const handleErrors = (err) => {
 // store new product
 const store = async (req, res) => {
 
-    const { name, supplier, stock, acquisition_price, retail_price } = req.body
+    const { name, supplier, category, stock, acquisition_price, retail_price } = req.body
 
     try {
-        const product = await Product.create({ name, supplier, stock, acquisition_price, retail_price })
+        const product = await Product.create({ name, supplier, category, stock, acquisition_price, retail_price })
 
         res.status(201)
             .json({ product })
@@ -53,15 +55,39 @@ const store = async (req, res) => {
 const create = async (req, res) => {
 
     let suppliers = await Supplier.find({}).sort({ createdAt: -1 })
+    let categories = await Category.find({}).sort({ createdAt: -1 })
 
-    res.render('pages/product/create-product', { title: 'Add Product', suppliers: suppliers })
+    res.render('pages/product/create-product', { title: 'Add Product', suppliers: suppliers, categories: categories })
 }
 
 const edit = async (req, res) => {
 
     const product = await Product.find({ _id: req.params.id })
 
-    res.render('pages/product/edit-product', { title: 'Edit Product', product: product[0] })
+    let suppliers = await Supplier.find({}).sort({ createdAt: -1 })
+    let categories = await Category.find({}).sort({ createdAt: -1 })
+
+    let item = []
+
+    product.forEach((product) => {
+        suppliers.forEach((supplier) => {
+            if (product.supplier === supplier._id.toString()) {
+
+                item.push({
+                    _id: product._id,
+                    name: product.name,
+                    stock: product.stock,
+                    category: product.category,
+                    acquisition_price: product.acquisition_price,
+                    retail_price: product.retail_price,
+                    supplier_id: supplier._id.toString(),
+                    supplier_name: supplier.name
+                })
+            }
+        })
+    })
+
+    res.render('pages/product/edit-product', { title: 'Edit Product', product: item[0], suppliers: suppliers, categories: categories })
 }
 
 const update = async (req, res) => {

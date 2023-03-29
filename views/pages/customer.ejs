@@ -32,13 +32,13 @@
              </div>
            </div>
         </div>
-        <div class="row">
+        <div class="row bg-white p-2">
             <div class="col-lg-12 mb-2">
                 <input type="text" class="form-control w-25 float-end" placeholder="search" onkeyup="search(this.value)">
             </div>
             <% customers.forEach((customer) => { %>
                 <div class="col-lg-2 mb-2 customer" data-name="<%= customer.name %>">
-                    <div class="card h-100">
+                    <div class="card bg-light h-100">
                         <div class="mb-3 p-2 d-flex justify-content-center">
                             <div class="avatar"><span class="fs-3 text-white"><%= customer.name[0].toUpperCase() %></span></div>
                         </div>

@@ -19,7 +19,7 @@
                           <div class="col-lg-12 mb-3">
                                 <div class="name text-start text-error"></div>
                                 <div class="form-floating mb-2">
-                                    <input type="text" class="form-control"  placeholder="name" name="name">
+                                    <input type="text" class="form-control"  placeholder="name" name="name" value="<%= product.name %>">
                                     <label for="">Product name</label>
                                 </div>
                           </div>
@@ -28,7 +28,7 @@
                                 <div class="supplier text-start text-error"></div>
                                <div class="form-floating mb-3">
                                     <select name="supplier" class="form-select text-uppercase">
-                                         <option value="">Choose one</option>
+                                         <option value="<%= product.supplier_id%>"><%= product.supplier_name %></option>
                                     <% suppliers.forEach((supplier)=> { %>
                                         <option value="<%= supplier.id %>"><%= supplier.name %></option>
                                     <% }) %>
@@ -41,7 +41,7 @@
                                 <div class="category text-start text-error"></div>
                                <div class="form-floating mb-3">
                                     <select name="category" class="form-select text-uppercase">
-                                         <option value="">Choose one</option>
+                                         <option value="<%= product.category %>"><%= product.category %></option>
                                     <% categories.forEach((category)=> { %>
                                         <option value="<%= category.category %>"><%= category.category %></option>
                                     <% }) %>
@@ -53,7 +53,7 @@
                           <div class="col-lg-12 mb-3">
                                 <div class="stock text-start text-error"></div>
                                 <div class="form-floating mb-2">
-                                    <input type="number" class="form-control"  placeholder="stock" name="stock" value="1">
+                                    <input type="number" class="form-control"  placeholder="stock" name="stock" value="<%= product.stock %>">
                                     <label for="">Quantity stock</label>
                                 </div>
                           </div>
@@ -61,7 +61,7 @@
                            <div class="col-lg-6 mb-3">
                                 <div class="ac-price text-start text-error"></div>
                                 <div class="form-floating mb-2">
-                                    <input type="text" class="form-control"  placeholder="price" name="acquisition_price" value="0" id="acquisition_price">
+                                    <input type="text" class="form-control"  placeholder="price" name="acquisition_price" value="<%= product.acquisition_price %>"id="acquisition_price">
                                     <label for="">&#8369; Product acquisition price</label>
                                 </div>
                           </div>
@@ -69,7 +69,7 @@
                            <div class="col-lg-6 mb-3">
                                 <div class="re-price text-start text-error"></div>
                                 <div class="form-floating mb-2">
-                                    <input type="text" class="form-control"  placeholder="price" name="retail_price" value="0" id="retail_price">
+                                    <input type="text" class="form-control"  placeholder="price" name="retail_price" value="<%= product.retail_price%>" id="retail_price">
                                     <label for="">&#8369; Product retail price</label>
                                 </div>
                           </div>
@@ -124,7 +124,7 @@
             Array.from(form.elements).forEach(el => el.disabled = true)
 
             try {
-                const res = await fetch('/product/store',{
+                const res = await fetch('/product/update/<%= product._id %>',{
                     method: 'POST',
                     body: JSON.stringify({name, supplier, category, stock, acquisition_price, retail_price}),
                     headers: { 'Content-type': 'application/json' }
@@ -135,8 +135,7 @@
                 Array.from(form.elements).forEach(el => el.disabled = false)
 
                 if(data.product){
-                    form.reset()
-                    msgAlert('System message','Product has been Successfully created!')
+                    msgAlert('System message','Changes has been Successfully created!')
                 }
                 if(data.errors){
                     nameError.textContent = data.errors.name

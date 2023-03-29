@@ -1,6 +1,7 @@
 const Supplier = require('../models/Supplier')
 const Category = require('../models/Category')
 const Customer = require('../models/Customer')
+const Product = require('../models/Product')
 
 // functions
 const login = (req, res) => {
@@ -33,8 +34,33 @@ const customer = async (req, res) => {
 
 const product = async (req, res) => {
 
+    let products = await Product.find({}).sort({ createdAt: -1 })
+    let suppliers = await Supplier.find({})
 
-    res.render('pages/product', { title: 'Product' })
+    let items = []
+
+    products.forEach((product) => {
+        suppliers.forEach((supplier) => {
+            if (product.supplier === supplier._id.toString()) {
+
+                items.push({
+                    _id: product._id,
+                    product_name: product.name,
+                    stock: product.stock,
+                    product_category: product.category,
+                    acquisition_price: product.acquisition_price,
+                    retail_price: product.retail_price,
+                    supplier_id: supplier._id.toString(),
+                    supplier_name: supplier.name,
+                    supplier_contact: supplier.contact,
+                    supplier_address: supplier.address
+                })
+            }
+        })
+    })
+
+
+    res.render('pages/product', { title: 'Product', products: items })
 }
 const logout = (req, res) => {
     res.cookie('jwt', '', { maxAge: 1 })

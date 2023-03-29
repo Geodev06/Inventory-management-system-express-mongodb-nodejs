@@ -13,6 +13,11 @@ const productSchema = new mongoose.Schema({
         required: [true, 'Supplier field is required.'],
         lowercase: true
     },
+    category: {
+        type: String,
+        required: [true, 'Category field is required.'],
+        lowercase: true
+    },
     stock: {
         type: Number,
         required: [true, 'Stock field is required.'],

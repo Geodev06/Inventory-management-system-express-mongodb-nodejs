@@ -38,13 +38,20 @@ mongoose.connect(DB, {
 
 app.use(authRoutes)
 
+app.get('/notfound', (req, res, next) => {
+    res.status(404)
+        .render('404', { title: 'Page not found!' })
+})
+
 app.use('/supplier', supplierRoutes)
 app.use('/category', categoryRoutes)
 app.use('/customer', customerRoutes)
 app.use('/product', productRoutes)
 
-app.use((req, res, next) => {
-    res.status(404)
-        .render('404', { title: 'Page not found!' })
-})
 
+
+
+app.use((req, res, next) => {
+    res.redirect('/notfound')
+    next()
+})

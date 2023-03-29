@@ -8,7 +8,7 @@
     }
   </style>
     <%- include('../partials/nav.ejs') -%>
-
+<script src="js/barcode.all.min.js"></script>
     <div class="container">
         <div class="row">
            <div class="d-flex justify-content-between align-items-center">
@@ -17,24 +17,85 @@
               <a href="/product/create"class="btn btn-sm btn-success text-white mx-2">Create new product</a>
              </div>
            </div>
-           
 
+           <div class="row bg-white p-2" >
+            <div class="col-lg-8"></div>
+            <div class="col-lg-4 mb-2">
+              <input type="text" class="form-control float-end " placeholder="search" onkeyup="search(this.value)">
+            </div>
+            
+            <% products.forEach((item)=> { %>
+ <!-- product-card -->
+              <div class="col-lg-4 col-md-6 mb-2">
+                <div class="card bg-light border-1 h-100 product" data-name="<%= item.product_name %>">
+                 <div class="d-flex flex-column p-3 h-100">
+                   <div class="d-flex justify-content-between">
+                    <h5 class="mb-0 text-capitalize"><%= item.product_name %></h5>
+                    <span>Stock : <%= item.stock %></span>
+                   </div>
+                   <p class="m-0" style="font-size: 12px;">Category : <%= item.product_category %></p>
+                   <div class="d-flex justify-content-between h-100">
+                     <p class="m-0" style="font-size: 12px;">Acquisition price : <span class="text-info fw-bold"> &#8369; <%= item.acquisition_price %></span></p>
+                      <p class="m-0" style="font-size: 12px;">Retail price : <span class="text-success fw-bold">  &#8369; <%= item.retail_price %></span></p>
+                   </div>
+                   <hr class="border-1 mb-1">
+
+                   <div class="d-flex justify-content-between align-items-center mb-2 h-100">
+                    <div class="d-flex flex-column">
+                        <p class="m-0" style="font-size: 11px;">Supplier name : <span class="text-dark text-uppercase fw-bold"><%= item.supplier_name %></span></p>
+                         <p class="m-0" style="font-size: 11px;">Supplier contact : <span class="text-dark text-uppercase fw-bold"><%= item.supplier_contact %></span></p>
+                         <p class="m-0" style="font-size: 11px;">Supplier address : <span class="text-dark text-uppercase fw-bold"><%= item.supplier_address %></span></p>
+                   </div>
+                   </div>
+                   <div class="text-center">
+                      <svg class="barcode" width="10px"
+                      jsbarcode-fontsize="10"
+                       jsbarcode-value="<%= item._id %>"
+                        jsbarcode-textmargin="0"
+                        jsbarcode-width="1"
+                         jsbarcode-fontoptions="bold">
+                        </svg>
+                    </div>
+                   <div class="card-footer border-1 h-100">
+                    <div class="d-flex justify-content-between">
+                     <button class="btn btn-primary btn-sm">Place order</button>
+                      <div class="d-flex">
+                          <a class="btn btn-success text-white btn-sm mx-1" href="/product/edit/<%= item._id %>">Edit</a>
+                            <a class="btn btn-danger text-white btn-sm" href="/product/destroy/<%= item._id %>">Delete</a>
+                      </div>
+                   </div>
+                   </div>
+                 </div>
+                </div>
+              </div>
+            <!-- end -->
+            <% }) %>
+
+            <% if(!products.length) { %>
+              <div class="col-lg-12">
+                <p class="mx-3">No records found!</p>
+              </div>
+            <% } %>
+           
+           </div>
         </div>
     </div>
     <%- include('../partials/footer.ejs') -%>
 </body>
-<!-- <script>
-  function search(value){
-    const supplier_item = document.querySelectorAll('.supplier-item-name')
+<script>
+  JsBarcode('.barcode').init()
+
+   function search(value){
+    const customer = document.querySelectorAll('.product')
     
-    for (let i = 0; i < supplier_item.length; i++) {
-      // console.log(supplier_item[i].dataset.name)
-      if(supplier_item[i].dataset.name.includes(value.toLowerCase())){
-        supplier_item[i].classList.remove('is-hidden')
+    for (let i = 0; i < customer.length; i++) {
+      // console.log(customer[i].dataset.name)
+      if(customer[i].dataset.name.includes(value.toLowerCase())){
+        customer[i].classList.remove('is-hidden')
       }else{
-        supplier_item[i].classList.add('is-hidden')
+        customer[i].classList.add('is-hidden')
       }
     }
   }
-</script> -->
+</script>
 </html>
