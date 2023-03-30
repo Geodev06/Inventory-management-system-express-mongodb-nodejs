@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/header.ejs') -%>
+<body class="bg-light">
+  <style>
+    .is-hidden{
+      display: none;
+    }
+  </style>
+    <%- include('../partials/nav.ejs') -%>
+    <script src="js/jquery-3.5.1.js"></script>
+    <link rel="stylesheet" href="css/jquery-editable-select.css">
+    <script src="/js/jquery-editable-select.js"></script>
+
+    <div class="container">
+        <div class="row">
+           <div class="d-flex justify-content-between align-items-center">
+             <h3 class="p-3 mx-3 fw-bold">Orders</h3>
+           </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                   <div class="d-flex justify-content-between align-items-center p-3">
+                     <div class="d-flex flex-column">
+                        <h6 class="m-0">Products</h6>
+                        <p class="m-0" style="font-size: 10px;">No. of products <span><%= products.length %></span></p>
+                     </div>
+                    <input type="text" class="form-control w-25" placeholder="search.." onkeyup="search(this.value)">
+                   </div>
+                    <div class="row p-2" id="product-row">
+                       <% products.forEach((item) => { %>
+                        <div class="col-lg-4 mb-2 col-md-6 product" data-name="<%= item.product_name %>">
+                            <div class="card bg-light h-100">
+                                <div class="card-header h-100">
+                                    <h6 class="m-0 text-capitalize fw-bold"><%= item.product_name %></h6>
+                                    <div class="d-flex justify-content-between">
+                                        <p class="m-0 text-capitalize text-success" style="font-size:12px ;"><%= item.product_category%></p>
+                                        <p class="m-0 text-capitalize" style="font-size:12px ;">Stock :<span class="text-muted fw-bold"> <%= item.stock%></span></p>
+                                    </div>
+                                </div>
+                                <div class="card-body bg-white shadow-sm h-100">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="fw-bold text-secondary"> &#8369; <%= item.retail_price%></h4>
+                                         <button class="btn btn-primary btn-sm add-to-order"
+                                         data-product_id="<%= item._id%>"
+                                         data-product_name="<%= item.product_name %>"
+                                         data-stock="<%= item.stock %>"
+                                         data-product_price="<%= item.retail_price %>"
+                                         data-category="<%= item.product_category %>"
+                                         data-supplier_id="<%= item.supplier_id %>"
+                                         >Add to order</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       <% }) %>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+               <div class="d-flex justify-content-between align-items-center p-3">
+                     <div class="d-flex flex-column">
+                        <h6 class="m-0">Ordes</h6>
+                        <p class="m-0" style="font-size: 10px;">No. of orders <span><%= orders.length %></span></p>
+                     </div>
+                    <input type="text" class="form-control w-50" placeholder="search.." onkeyup="search_order(this.value)">
+                   </div>
+
+                   <div class="row p-2" id="product-row">
+                    
+                     <% orders.forEach((order) => { %>
+                        <div class="col-lg-12 mb-2 order" data-name="<%= order.product %>">
+                            <div class="card bg-white h-100 p-3">
+                                  <h6 class="m-0 text-capitalize fw-bold text-muted"><%= order.product %></h6>
+                                <div class="d-flex justify-content-between align-items-baseline m-0"> 
+                                    <span class="badge bg-light text-muted text-wrap"> <span>Qty: </span> <%= order.quantity %></span>
+                                    <span class="badge bg-light text-muted text-wrap"> <span> &#8369; </span> <%= order.amount %></span>
+                                    <a class="btn btn-danger btn-sm" href="/order/destroy/<%= order.id %>">void</a>
+                                </div>
+                            </div>
+                        </div>
+                       <% }) %>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/order-modal.ejs') -%>
+    <%- include('../partials/footer.ejs') -%>
+</body>
+
+<script>
+
+   function search(value){
+    const product = document.querySelectorAll('.product')
+    
+    for (let i = 0; i < product.length; i++) {
+      // console.log(customer[i].dataset.name)
+      if(product[i].dataset.name.includes(value.toLowerCase())){
+        product[i].classList.remove('is-hidden')
+      }else{
+        product[i].classList.add('is-hidden')
+      }
+    }
+  }
+
+  function search_order(value){
+    const order = document.querySelectorAll('.order')
+    
+    for (let i = 0; i < order.length; i++) {
+      // console.log(customer[i].dataset.name)
+      if(order[i].dataset.name.includes(value.toLowerCase())){
+        order[i].classList.remove('is-hidden')
+      }else{
+        order[i].classList.add('is-hidden')
+      }
+    }
+  }
+
+ 
+
+  $('#product-row .product').on('click','.add-to-order', function(e){
+
+        // display values
+        $('#product-name').text(this.dataset.product_name)
+        $('#product-category').text(this.dataset.category)
+        $('#product-retail_price').text('\u20B1 '+ this.dataset.product_price)
+        $('#product-retail_price').attr('data-retail_price', this.dataset.product_price)
+
+        $('#stock').attr('data-stock', this.dataset.stock)
+        $('#stock').text('Remaining stock :' + this.dataset.stock)
+
+        // forms
+        $('#product_id').val(this.dataset.product_id)
+        $('#product').val(this.dataset.product_name)
+        $('#category').val(this.dataset.category)
+        $('#supplier_id').val(this.dataset.supplier_id)
+
+
+        $('#order-modal').modal('show')
+  })
+
+</script>
+</html>

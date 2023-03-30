@@ -1,0 +1,111 @@
+
+<div class="modal fade py-5" tabindex="-1" role="dialog" id="order-modal">
+  <div class="modal-dialog modal-md" role="document">
+       <form id="form">
+    <div class="modal-content rounded-4 ">
+      <div class="modal-header border-bottom-0">
+        <h1 class="modal-title fs-5"  id="modal-title">Product information</h1>
+        <button type="button" class="btn-close text-white" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-0">
+        
+     
+            <div class="row">
+                <div class="bg-light p-3 mb-3">
+                     <h4 class="m-0 text-capitalize" id="product-name">Product name</h4>
+                     <p class="m-0 text-capitalize  text-info" id="product-category" style="font-size: 14px;">Category</p>
+                     <p class="m-0 text-capitalize  text-info" id="product-retail_price" style="font-size: 14px;">Price</p>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                   <div class="mb-2">
+                        <label for="qty" class="form-label">Enter Quantity</label>
+                        <input type="number" id="qty" class="form-control"
+                         placeholder="Quantity"
+                         maxlength="4"
+                         onkeyup="handlePrice(this.value)"
+                         onkeydown="handlePrice(this.value)"
+                         name="quantity"
+                       >
+                    </div>
+                    <div class="mb-2 d-flex flex-column align-items-center justify-content-center">
+                        <h1 class="mx-4 fw-bold m-0 text-muted">&#8369; <span id="label_price">0.00</span></h1>
+                        <p style="font-size: 10px;" class="m-0 text-info">Product price qty * retail price</p>
+                    </div> 
+                </div>
+                <!-- hidden values -->
+                <input type="hidden" name="product_id" id="product_id">
+                <input type="hidden" name="product" id="product">
+                <input type="hidden" name="category" id="category">
+                <input type="hidden" name="amount" id="amount">
+                <input type="hidden" name="supplier_id" id="supplier_id">
+                 <input type="hidden" name="customer_id" id="customer_id">
+            </div>
+       
+      </div>
+      <hr>
+      <div class="d-flex justify-content-between border-top-0 mt-2 mb-3">
+        <p class="mx-3" id="stock">Remaining stock</p>
+        <button type="submit" class="mx-3 btn btn-md btn-primary w-50 mb-2" id="btn-submit" disabled>Add to order</button>
+      </div>
+       </form>
+    </div>
+  </div>
+</div>
+<script>
+
+    function handlePrice(value){
+        // qty * price
+        let qty = value == '' ? 0 : parseInt(value)
+        let retail_price = parseFloat($('#product-retail_price')[0].dataset.retail_price)
+        let price = qty * retail_price
+
+        if(isNaN(price) || price <= 0 || parseInt(value) > parseFloat($('#stock')[0].dataset.stock)) {
+            $('#qty').addClass('border-2 border-danger')
+            $('#btn-submit').attr('disabled','disabled')
+        } else {
+            $('#qty').removeClass('border-2 border-danger')
+            $('#label_price').text(price.toFixed(2))
+             $('#btn-submit').removeAttr('disabled')
+            $('#amount').val(price.toFixed(2))
+        }
+    }
+
+    $('.btn-close').click(function(){
+        $('#order-modal').modal('hide')
+    })
+
+    $('#form').on('submit', async function(e){
+        e.preventDefault()
+      const product_id = $('#product_id').val()
+      const product = $('#product').val()
+      const category = $('#category').val()
+      const quantity = $('#qty').val()
+      const amount = $('#amount').val()
+      const supplier_id = $('#supplier_id').val()
+
+
+        try {
+            const res = await fetch('/order/store',{
+                method: 'POST',
+                body: JSON.stringify({
+                    product_id,
+                    product,
+                    category,
+                    quantity,
+                    amount,
+                    supplier_id
+                }),
+                headers: { 'Content-type': 'application/json' }
+            })
+
+            const data = res.json()
+            console.log(data.order)
+            if(data) {
+                location.assign('/order')
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    })
+</script>
