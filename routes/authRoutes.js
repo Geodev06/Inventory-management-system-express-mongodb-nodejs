@@ -20,6 +20,7 @@ router.get('/inventory', auth, UserController.inventory)
 router.get('/customer', auth, UserController.customer)
 router.get('/product', auth, UserController.product)
 router.get('/order', auth, UserController.order)
+router.get('/release', auth, UserController.release)
 router.get('/logout', UserController.logout)
 
 // user authentication

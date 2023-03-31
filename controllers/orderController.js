@@ -47,7 +47,6 @@ const store = async (req, res) => {
             }
         }, { new: true, runValidators: true })
 
-        console.log(order)
 
         res.status(201)
             .json({ order })
@@ -138,7 +137,6 @@ const destroy = async (req, res) => {
         console.log(err)
     }
 }
-
 
 module.exports = {
     create,

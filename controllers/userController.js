@@ -3,6 +3,7 @@ const Category = require('../models/Category')
 const Customer = require('../models/Customer')
 const Product = require('../models/Product')
 const Order = require('../models/Order')
+const Release = require('../models/Release')
 
 // functions
 const login = (req, res) => {
@@ -17,20 +18,24 @@ const register = (req, res) => {
 }
 
 
-const dashboard = (req, res) => {
-    res.render('pages/dashboard', { title: 'Dashboard' })
+const dashboard = async (req, res) => {
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
+    res.render('pages/dashboard', { title: 'Dashboard', releasesCount: releasesCount })
 
 }
 
 const inventory = async (req, res) => {
     let suppliers = await Supplier.find({}).sort({ createdAt: -1 })
     let categories = await Category.find({}).sort({ createdAt: -1 })
-    res.render('pages/inventory', { title: 'Inventory', suppliers: suppliers, categories: categories })
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
+    res.render('pages/inventory', { title: 'Inventory', suppliers: suppliers, categories: categories, releasesCount: releasesCount })
 }
 
 const customer = async (req, res) => {
     let customer = await Customer.find({}).sort({ createdAt: -1 })
-    res.render('pages/customer', { title: 'Customer', customers: customer })
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
+
+    res.render('pages/customer', { title: 'Customer', customers: customer, releasesCount: releasesCount })
 }
 
 const product = async (req, res) => {
@@ -59,11 +64,14 @@ const product = async (req, res) => {
         })
     })
 
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
 
-    res.render('pages/product', { title: 'Product', products: items })
+    res.render('pages/product', { title: 'Product', products: items, releasesCount: releasesCount })
 }
 
 const order = async (req, res) => {
+
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
 
     let products = await Product.find({}).sort({ createdAt: -1 })
     let suppliers = await Supplier.find({})
@@ -71,6 +79,12 @@ const order = async (req, res) => {
 
     let customers = await Customer.find({}).sort({ createdAt: -1 })
     let orders = await Order.find({}).sort({ createdAt: -1 })
+
+    let totalAmount = 0;
+
+    for (let index = 0; index < orders.length; index++) {
+        totalAmount += parseFloat(orders[index].amount)
+    }
 
     products.forEach((product) => {
         suppliers.forEach((supplier) => {
@@ -88,9 +102,29 @@ const order = async (req, res) => {
         })
     })
 
-    res.render('pages/order', { title: 'Product', products: items, customers: customers, orders: orders })
+    res.render('pages/order', {
+        title: 'Product',
+        products: items,
+        customers: customers,
+        orders: orders,
+        totalAmount: totalAmount.toFixed(2),
+        releasesCount: releasesCount
+    })
 }
 
+const release = async (req, res) => {
+
+    const releases = await Release.find({}).sort({ createdAt: -1 })
+
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
+
+
+    res.render('pages/release', {
+        title: 'Release',
+        releases: releases,
+        releasesCount: releasesCount
+    })
+}
 const logout = (req, res) => {
     res.cookie('jwt', '', { maxAge: 1 })
     res.redirect('/')
@@ -104,5 +138,6 @@ module.exports = {
     customer,
     product,
     order,
+    release,
     logout
 }

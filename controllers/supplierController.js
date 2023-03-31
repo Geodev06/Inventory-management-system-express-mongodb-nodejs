@@ -1,5 +1,5 @@
 const Supplier = require('../models/Supplier')
-
+const Release = require('../models/Release')
 const jwt = require('jsonwebtoken')
 
 /**
@@ -44,16 +44,16 @@ const store = async (req, res) => {
 
 }
 
-const create = (req, res) => {
-
-    res.render('pages/supplier/create-supplier', { title: 'Add supplier' })
+const create = async (req, res) => {
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
+    res.render('pages/supplier/create-supplier', { title: 'Add supplier', releasesCount: releasesCount })
 }
 
 const edit = async (req, res) => {
 
     const supplier = await Supplier.find({ _id: req.params.id })
-
-    res.render('pages/supplier/edit-supplier', { title: 'Edit supplier', supplier: supplier[0] })
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
+    res.render('pages/supplier/edit-supplier', { title: 'Edit supplier', supplier: supplier[0], releasesCount: releasesCount })
 }
 
 const update = async (req, res) => {

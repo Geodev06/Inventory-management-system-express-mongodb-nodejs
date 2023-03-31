@@ -1,5 +1,5 @@
 const Category = require('../models/Category')
-
+const Release = require('../models/Release')
 /**
  * resource functions 
  * store - store data, destroy - delete data
@@ -42,9 +42,9 @@ const store = async (req, res) => {
 
 }
 
-const create = (req, res) => {
-
-    res.render('pages/category/create-category', { title: 'Add category' })
+const create = async (req, res) => {
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
+    res.render('pages/category/create-category', { title: 'Add category', releasesCount: releasesCount })
 }
 
 const destroy = async (req, res) => {

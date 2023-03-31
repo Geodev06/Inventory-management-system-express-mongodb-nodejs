@@ -6,6 +6,12 @@
     .is-hidden{
       display: none;
     }
+
+    table th ,td{
+      padding: 10px;
+      margin: 0;
+      border-bottom: 1px solid gainsboro;
+    }
   </style>
     <%- include('../partials/nav.ejs') -%>
     <script src="js/jquery-3.5.1.js"></script>
@@ -16,11 +22,12 @@
         <div class="row">
            <div class="d-flex justify-content-between align-items-center">
              <h3 class="p-3 mx-3 fw-bold">Orders</h3>
+              <h3 class="text-dark bg-primary text-white p-3 fw-bold rounded-4">Total:  &#8369;<%= totalAmount %></h6>
            </div>
         </div>
 
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-8" style="max-height: 480px; overflow-y: auto;" >
                 <div class="card">
                    <div class="d-flex justify-content-between align-items-center p-3">
                      <div class="d-flex flex-column">
@@ -61,8 +68,9 @@
                 </div>
             </div>
 
-            <div class="col-lg-4">
-                <div class="card">
+            <div class="col-lg-4 d-flex flex-column justify-content-between">
+              
+                <div class="card"  style="max-height: 380px; overflow-y: auto; overflow-x: hidden;" >
                <div class="d-flex justify-content-between align-items-center p-3">
                      <div class="d-flex flex-column">
                         <h6 class="m-0">Ordes</h6>
@@ -71,31 +79,63 @@
                     <input type="text" class="form-control w-50" placeholder="search.." onkeyup="search_order(this.value)">
                    </div>
 
-                   <div class="row p-2" id="product-row">
-                    
-                     <% orders.forEach((order) => { %>
-                        <div class="col-lg-12 mb-2 order" data-name="<%= order.product %>">
-                            <div class="card bg-white h-100 p-3">
-                                  <h6 class="m-0 text-capitalize fw-bold text-muted"><%= order.product %></h6>
-                                <div class="d-flex justify-content-between align-items-baseline m-0"> 
-                                    <span class="badge bg-light text-muted text-wrap"> <span>Qty: </span> <%= order.quantity %></span>
-                                    <span class="badge bg-light text-muted text-wrap"> <span> &#8369; </span> <%= order.amount %></span>
-                                    <a class="btn btn-danger btn-sm" href="/order/destroy/<%= order.id %>">void</a>
-                                </div>
-                            </div>
-                        </div>
-                       <% }) %>
+                   <div class="row p-3" id="product-row">
+                      <table class="">
+                          <tr>
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th>Sub total</th>
+                            <th>Action</th>
+                          </tr>
+                          <% orders.forEach((order) => { %>
+                          <tr class="order" data-name="<%= order.product %>">
+                            <td class="fw-bold text-capitalize" style="font-size: 12px;"><%= order.product %> </td>
+                            <td style="font-size: 12px;"><%= order.quantity %> </td>
+                            <td style="font-size: 12px;"><%= order.amount %> </td>
+                            <td> <a class="btn btn-danger btn-sm" href="/order/destroy/<%= order.id %>">void</a> </td>
+                          </tr>
+                          <% }) %>
+
+                       
+                   
+                      </table>
+                          <% if(!orders.length) { %>
+                              <p class="p-3">There is no items in orders</p>
+                          <%}%>
                    </div>
+                  
+                </div>
+                <div class=" mt-2">
+                  <form id="releaseForm">
+                    <div class="mb-2">
+                     <div class="d-flex justify-content-between align-items-center">
+                       <label for="" style="font-size: 10px;">Select customer <span class="text-danger fs-6">*</span></label>
+                      <div class="customer text-error text-danger"></div>
+                     </div>
+                      <select class="editable-select form-select m-0" id="customer_name">
+                        <option value="">Choose one</option>
+                        <% customers.forEach((customer) => { %>
+                            <option value="<%= customer.id %>" class="text-capitalize"><%= customer.name %></option>
+                        <% }) %>
+                        
+                      </select>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg text-white w-100 <%= orders.length ? '': 'disabled' %>" >Submit Order</button>
+                  </form>
                 </div>
             </div>
         </div>
     </div>
 
     <%- include('../partials/order-modal.ejs') -%>
+
+    <%- include('../partials/modal.ejs') -%>
     <%- include('../partials/footer.ejs') -%>
 </body>
 
 <script>
+
+
 
    function search(value){
     const product = document.querySelectorAll('.product')
@@ -146,5 +186,46 @@
         $('#order-modal').modal('show')
   })
 
+  const releaseForm = document.querySelector('#releaseForm')
+
+  let customer_id = ''
+
+    $('#customer_name')
+          .editableSelect({effects: 'slide'})
+            .on('select.editable-select', function(e, li) {
+             customer_id = li.attr('value')
+          })
+
+    releaseForm.addEventListener('submit', async (e) => {
+
+        e.preventDefault()
+
+        const customerError = document.querySelector('.customer.text-error')
+        customerError.textContent = ''
+        console.log(customer_id)
+        try {
+            const res = await fetch('/release/store',{
+                method: 'POST',
+                body: JSON.stringify({customer_id}),
+                headers: { 'Content-type': 'application/json' }
+            })
+
+            const data = await res.json()
+            if(data.release){
+
+                msgAlert('System message','Transation ended!')
+
+                setTimeout(()=> {
+                  location.assign('/order')
+                }, 3000)
+            }
+            if(data.errors){
+                customerError.textContent = data.errors.customer_name
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    })
 </script>
 </html>

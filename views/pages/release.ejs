@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/header.ejs') -%>
+<body class="bg-light">
+  <style>
+    .is-hidden{
+      display: none;
+    }
+
+    table th ,td{
+      padding: 10px;
+      margin: 0;
+      border-bottom: 1px solid gainsboro;
+
+    }
+    .item-list li {
+        font-size: 12px;
+    }
+    .p-12 {
+        font-size: 12px;
+    }
+  </style>
+    <%- include('../partials/nav.ejs') -%>
+    <script src="js/jquery-3.5.1.js"></script>
+    <link rel="stylesheet" href="css/jquery-editable-select.css">
+    <script src="/js/jquery-editable-select.js"></script>
+
+    <div class="container">
+        <div class="row">
+           <div class="d-flex justify-content-between align-items-center">
+             <h3 class="p-3 mx-3 fw-bold">Release Orders</h3>
+           </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class=" w-100">
+                    <tr>
+                        <th>Release ID</th>
+                        <th>Customer name</th>
+                        <th>Items</th>
+                        <th>No. of Items</th>
+                        <th>Status</th>
+                        <th>Total Amount</th>
+                        <th>Order At</th>
+                        <th>Released At</th>
+                    </tr>
+                    
+                    <% releases.forEach((release)=> { %>
+                    <tr>
+                        <td class="fw-bold text-uppercase"><%= release.id %></td>
+                        <td class="text-info text-capitalize"><%= release.customer_name %></td>
+                        <td>
+                            <% release.items.forEach((x) => { %>
+                                <div class="card">
+                                    <div class="card-header">
+                                        <p class="text-capitalize fw-bold m-0 p-12"><%= x.product_name %></p>
+                                        <p class="text-capitalize text-info m-0 p-12"><%= x.category %></p>
+                                        <p class="text-capitalize m-0 p-12">qty :<%= x.quantity %></p>
+                                        <p class="text-capitalize m-0 p-12">sub total : &#8369; <%= x.sub_total %></p>
+                                    </div>
+                                </div>       
+                            <% }) %>
+                        </td>
+                        <td><%= release.no_of_items %></td>
+                        <td><% if(release.status == 0) {%>
+                          <div class="d-flex justify-content-between align-items-center">
+                              <span class="badge bg-warning">pending</span>
+                                <a class="btn badge bg-success text-white" href="release/update/<%= release.id %>">release now</a>
+                          </div>
+                        <% } else {%>
+                        <span class="badge bg-success">released</span>
+                        <%}%>
+                        </td>
+                        <td> &#8369; <%= parseFloat(release.total_amount).toFixed(2) %></td>
+                        <% var orderdate = new Date(Date.parse(release.createdAt))  %>
+                        <td style="font-size: 12px;"> <%= orderdate.toLocaleDateString() %></td>
+                         <td style="font-size: 12px;"> <%= release.releasedAt === null? '--': release.releasedAt %></td>
+                    </tr>
+                    <% }) %>
+                </table>
+            </div>
+        </div>
+       
+    </div>
+
+    <%- include('../partials/order-modal.ejs') -%>
+
+    <%- include('../partials/modal.ejs') -%>
+    <%- include('../partials/footer.ejs') -%>
+</body>
+
+
+</html>

@@ -1,5 +1,5 @@
 const Customer = require('../models/Customer')
-
+const Release = require('../models/Release')
 /**
  * resource functions 
  * store - store data, update - update data, destroy - delete data
@@ -42,16 +42,16 @@ const store = async (req, res) => {
 
 }
 
-const create = (req, res) => {
-
-    res.render('pages/customer/create-Customer', { title: 'Add Customer' })
+const create = async (req, res) => {
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
+    res.render('pages/customer/create-Customer', { title: 'Add Customer', releasesCount: releasesCount })
 }
 
 const edit = async (req, res) => {
 
     const customer = await Customer.find({ _id: req.params.id })
-
-    res.render('pages/customer/edit-Customer', { title: 'Edit Customer', customer: customer[0] })
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
+    res.render('pages/customer/edit-Customer', { title: 'Edit Customer', customer: customer[0], releasesCount: releasesCount })
 }
 
 const update = async (req, res) => {

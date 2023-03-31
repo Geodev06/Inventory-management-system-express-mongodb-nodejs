@@ -1,6 +1,7 @@
 const Product = require('../models/Product')
 const Supplier = require('../models/Supplier')
 const Category = require('../models/Category')
+const Release = require('../models/Release')
 
 /**
  * resource functions 
@@ -56,8 +57,8 @@ const create = async (req, res) => {
 
     let suppliers = await Supplier.find({}).sort({ createdAt: -1 })
     let categories = await Category.find({}).sort({ createdAt: -1 })
-
-    res.render('pages/product/create-product', { title: 'Add Product', suppliers: suppliers, categories: categories })
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
+    res.render('pages/product/create-product', { title: 'Add Product', suppliers: suppliers, categories: categories, releasesCount: releasesCount })
 }
 
 const edit = async (req, res) => {
@@ -86,8 +87,8 @@ const edit = async (req, res) => {
             }
         })
     })
-
-    res.render('pages/product/edit-product', { title: 'Edit Product', product: item[0], suppliers: suppliers, categories: categories })
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
+    res.render('pages/product/edit-product', { title: 'Edit Product', product: item[0], suppliers: suppliers, categories: categories, releasesCount: releasesCount })
 }
 
 const update = async (req, res) => {

@@ -14,10 +14,16 @@
                <div class="dropdown nav-link">
           <a href="#" class="d-block text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
            Orders
+           <% if(releasesCount > 0) { %>
+            <span class="badge bg-danger"><%= releasesCount %></span>
+           <%} %>
           </a>
           <ul class="dropdown-menu text-small">
             <li><a class="dropdown-item " href="/order">Product orders</a></li>
-            <li><a class="dropdown-item" href="#">Product release</a></li>
+            <li><a class="dropdown-item d-flex" href="/release">Product release 
+              <% if(releasesCount > 0) { %>
+                <span class="badge bg-danger mx-2"><%= releasesCount %></span>
+              <%} %></a></li>
           </ul>
         </div>
           </li>
