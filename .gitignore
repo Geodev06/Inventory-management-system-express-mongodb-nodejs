@@ -1,4 +1,4 @@
 node_modules
-chartjs
+/chartjs
 style.css
 .env
