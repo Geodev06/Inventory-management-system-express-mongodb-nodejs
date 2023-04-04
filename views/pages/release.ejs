@@ -37,10 +37,10 @@
                     <tr>
                         <th>Release ID</th>
                         <th>Customer name</th>
-                        <th>Items</th>
                         <th>No. of Items</th>
                         <th>Status</th>
                         <th>Total Amount</th>
+                        <th>Action</th>
                         <th>Order At</th>
                         <th>Released At</th>
                     </tr>
@@ -49,29 +49,26 @@
                     <tr>
                         <td class="fw-bold text-uppercase"><%= release.id %></td>
                         <td class="text-info text-capitalize"><%= release.customer_name %></td>
-                        <td>
-                            <% release.items.forEach((x) => { %>
-                                <div class="card">
-                                    <div class="card-header">
-                                        <p class="text-capitalize fw-bold m-0 p-12"><%= x.product_name %></p>
-                                        <p class="text-capitalize text-info m-0 p-12"><%= x.category %></p>
-                                        <p class="text-capitalize m-0 p-12">qty :<%= x.quantity %></p>
-                                        <p class="text-capitalize m-0 p-12">sub total : &#8369; <%= x.sub_total %></p>
-                                    </div>
-                                </div>       
-                            <% }) %>
-                        </td>
                         <td><%= release.no_of_items %></td>
                         <td><% if(release.status == 0) {%>
                           <div class="d-flex justify-content-between align-items-center">
                               <span class="badge bg-warning">pending</span>
-                                <a class="btn badge bg-success text-white" href="release/update/<%= release.id %>">release now</a>
                           </div>
                         <% } else {%>
                         <span class="badge bg-success">released</span>
                         <%}%>
                         </td>
                         <td> &#8369; <%= parseFloat(release.total_amount).toFixed(2) %></td>
+                        <td>
+                         <% if(release.status === 0) { %>
+                          <div class="d-flex">
+                            <a href="/release/update/<%= release.id %>" class="btn btn-info text-white btn-sm mx-1">release</a>
+                            <a href="/release/destroy/<%= release.id %>" class="btn btn-danger text-white btn-sm">cancel</a>
+                          </div>
+                         <% } else { %>
+                             <button data-link="/release/show/<%= release.id %>" class="print btn btn-primary text-white btn-sm">print</button=>
+                         <% } %>
+                        </td>
                         <% var orderdate = new Date(Date.parse(release.createdAt))  %>
                         <td style="font-size: 12px;"> <%= orderdate.toLocaleDateString() %></td>
                          <td style="font-size: 12px;"> <%= release.releasedAt === null? '--': release.releasedAt %></td>
@@ -88,6 +85,10 @@
     <%- include('../partials/modal.ejs') -%>
     <%- include('../partials/footer.ejs') -%>
 </body>
-
+  <script>
+    $('table tr').on('click', '.print', function(e){
+        window.open($(this)[0].dataset.link)
+    })
+  </script>
 
 </html>

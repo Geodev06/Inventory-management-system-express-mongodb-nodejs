@@ -20,7 +20,19 @@ const register = (req, res) => {
 
 const dashboard = async (req, res) => {
     const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
-    res.render('pages/dashboard', { title: 'Dashboard', releasesCount: releasesCount })
+    const productCount = await Product.count()
+    const customerCount = await Customer.count()
+    const releasedCount = await Release.count()
+    const categoryCount = await Category.count()
+
+    res.render('pages/dashboard', {
+        title: 'Dashboard',
+        releasesCount: releasesCount,
+        productCount: productCount,
+        customerCount: customerCount,
+        releasedCount: releasedCount,
+        categoryCount: categoryCount
+    })
 
 }
 
@@ -130,6 +142,26 @@ const logout = (req, res) => {
     res.redirect('/')
 }
 
+const getComposition = async (req, res) => {
+
+    const products = await Product.find({}).sort({ createdAt: -1 })
+    res.json({ products })
+}
+
+const getOrders = async (req, res) => {
+
+    const releases = await Release.find({ status: 1 }).sort({ createdAt: -1 })
+
+    const released = releases.map(x => {
+        return {
+            date: new Date(x.createdAt).toLocaleDateString(),
+            amount: parseFloat(x.total_amount).toFixed(2)
+        }
+    })
+
+    console.log(released)
+    res.json({ released })
+}
 module.exports = {
     login,
     register,
@@ -139,5 +171,8 @@ module.exports = {
     product,
     order,
     release,
+    // chart
+    getComposition,
+    getOrders,
     logout
 }

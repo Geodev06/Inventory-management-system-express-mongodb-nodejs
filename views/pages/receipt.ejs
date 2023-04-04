@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/header.ejs') -%>
+<body class="bg-light">
+  <style>
+    .is-hidden{
+      display: none;
+    }
+
+    table th ,td{
+      padding: 8px;
+      margin: 0;
+      font-size: 12px;
+      border-bottom: 1px solid gainsboro;
+
+    }
+    div {
+        font-size: 12px;
+    }
+    .p-12 {
+        font-size: 12px;
+    }
+  </style>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 mx-auto">
+               <div class="card mt-5">
+                 <h1 class="text-center text-muted p-2 m-0">IMS-AVA</h1>
+                 <P class="text-center m-0 mb-2" style="font-size: 12px;"> Inventory receipt </P>
+                 <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6 bg-light mb-1">
+                            Released Id: <span class="fw-bold p-12"><%= released._id %></span>
+                        </div>
+
+                         <div class="col-lg-6  bg-light mb-1">
+                            Customer name: <span class="fw-bold p-12"><%= released.customer_name %></span>
+                        </div>
+
+                           <div class="col-lg-6  bg-light mb-1">
+                            Ordered At: <span class="fw-bold p-12"><%= released.createdAt %></span>
+                        </div>
+
+                           <div class="col-lg-6  bg-light mb-1">
+                            Released At: <span class="fw-bold p-12"><%= released.releasedAt %></span>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <p class="mx-2 fw-bold p-12 mt-2 mb-0">Items</p>
+
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>product_id</th>
+                                    <th>product_name</th>
+                                    <th>category</th>
+                                    <th>quantity</th>
+                                    <th>subtotal</th>
+                                </tr>
+                                <% released.items.forEach((x) => { %>
+                                    <tr>
+                                        <td><%= x.product_id %></td>
+                                        <td class="text-capitalize"><%= x.product_name%></td>
+                                        <td class="text-capitalize"><%= x.category %></td>
+                                        <td><%= x.quantity%></td>
+                                        <td class="fw-bold text-secondary"> &#8369; <%= x.sub_total %></td>
+                                    </tr>
+                                <% }) %>
+                            </table>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <p class="float-end">Total: <span class="fw-bold"> &#8369; <%= parseFloat(released.total_amount).toFixed(2) %></span></p>
+                        </div>
+                        <div class="col-lg-12 mb-3">
+                            <p class="text-center m-0">_______________________________</p>
+                            <p class="text-center m-0 p-12">released and approved by :</p>
+                            <p class="text-center m-0 text-uppercase fw-bold" style="font-size: 12px;"><%= user.name %></p>
+                        </div>
+                    </div> 
+                 </div>
+               </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../partials/order-modal.ejs') -%>
+    <%- include('../partials/modal.ejs') -%>
+    <%- include('../partials/footer.ejs') -%>
+</body>
+
+<script>
+    
+</script>
+</html>

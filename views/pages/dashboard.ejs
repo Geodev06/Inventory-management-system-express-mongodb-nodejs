@@ -4,17 +4,230 @@
 <body class="bg-light">
     <%- include('../partials/nav.ejs') -%>
 
+    <script src="chartjs/package/dist/chart.js"></script>
+    <script src="chartjs/datalabels.min.js"></script>
+
     <div class="container">
         <div class="row">
             <h3 class="p-3 mx-3 fw-bold">Overview</h3>
-            <div class="col-lg-4">
-             <div class="card p-3">
-                <h4>Chart #1</h4>
+            <div class="col-lg-12 mb-2">
+
+             <div class="card p-2">
+                <div class="row">
+
+                    <div class="col-lg-3 mb-2">
+                        <div class="card p-3 bg-light h-100">
+                           <div class="d-flex justify-content-between align-items-center">
+                             <h5>Products</h5>
+                             <h4 class="fw-bold p-2 bg-danger rounded-4 text-white"><%= productCount %></h4>
+                           </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 mb-2">
+                        <div class="card p-3 bg-light h-100">
+                           <div class="d-flex justify-content-between align-items-center">
+                             <h5>Customers</h5>
+                             <h4 class="fw-bold p-2 bg-info rounded-4 text-white"><%= customerCount %></h4>
+                           </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 mb-2">
+                        <div class="card p-3 bg-light h-100">
+                           <div class="d-flex justify-content-between align-items-center">
+                             <h5>Released</h5>
+                             <h4 class="fw-bold p-2 bg-success rounded-4 text-white"><%= releasedCount %></h4>
+                           </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 mb-2">
+                        <div class="card p-3 bg-light h-100">
+                           <div class="d-flex justify-content-between align-items-center">
+                             <h5>Categories</h5>
+                             <h4 class="fw-bold p-2 bg-warning rounded-4 text-white"><%= categoryCount %></h4>
+                           </div>
+                        </div>
+                    </div>
+
+                </div>
+
              </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="card p-2">
+                    <div class="row">
+                        <div class="col-lg-6 mb-2">
+                            <div class="card p-2 bg-light">
+                                <h3 class="p-3">Composition</h3>
+                                <canvas id="composition" style="max-height: 400px;"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 mb-2">
+                            <div class="card p-2 bg-light">
+                                   <h3 class="p-3">Complete Orders</h3>
+                                <canvas id="orders" style="max-height: 400px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <%- include('../partials/footer.ejs') -%>
 </body>
+<script>
+    function randomColor (){
+        let value = "#"+ Math.floor(Math.random() * 16777215).toString(16).padStart(6,'0').toUpperCase()
+        return value
+    }
 
+     function loadComposistion(data) {
+
+        let labels = [];
+        let dataPoints = []
+        let  colors = []
+        for (let i = 0; i < data.length; i++) {
+            labels.push(data[i].product_name)
+            dataPoints.push(data[i].qty)
+            colors.push(randomColor())
+        }
+
+        var ctx = document.getElementById('composition')
+
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: ['Composition'],
+                    data: dataPoints,
+                    backgroundColor: colors,
+                    borderColor: [
+                        'transparent'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            plugins: [ChartDataLabels],
+            options: {
+            
+                
+                plugins: {
+                    datalabels: {
+                        display: true,
+                        formatter: (value, ctx) => {
+                            return ctx.chart.data.datasets[0].data[ctx.dataIndex]
+                        },
+                        backgroundColor: 'dodgerblue',
+                        color: 'white',
+                        borderRadius: 3,
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    async function getComposition(){
+         try {
+            const res = await fetch('/composistion/get',{
+                method: 'GET',
+                headers: { 'Content-type': 'application/json' }
+            })
+
+            const data = await res.json()
+            
+            const dataPoints = []
+            
+            data.products.forEach((x)=> {
+                dataPoints.push(
+                    {
+                        product_name: x.name,
+                        qty: x.stock
+                    }
+                )
+            })
+
+           loadComposistion(dataPoints)
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+      function loadOrder(data) {
+
+        let labels = [];
+        let dataPoints = []
+        let  colors = []
+        for (let i = 0; i < data.length; i++) {
+            labels.push(data[i].date)
+            dataPoints.push(data[i].amount)
+            colors.push(randomColor())
+        }
+
+        var ctx = document.getElementById('orders')
+
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: ['Composition'],
+                    data: dataPoints,
+                    backgroundColor: ['black'],
+                    borderColor: [
+                        'black'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            plugins: [ChartDataLabels],
+            options: {
+            
+                
+                plugins: {
+                    datalabels: {
+                        display: true,
+                        formatter: (value, ctx) => {
+                            return '\u20B1'+ctx.chart.data.datasets[0].data[ctx.dataIndex]
+                        },
+                        backgroundColor: 'orange',
+                        color: 'white',
+                        borderRadius: 3,
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    async function getOrder(){
+         try {
+            const res = await fetch('/order/get',{
+                method: 'GET',
+                headers: { 'Content-type': 'application/json' }
+            })
+
+            const data = await res.json()
+
+   
+           loadOrder(data.released)
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    getComposition()
+    getOrder()
+</script>
 </html>

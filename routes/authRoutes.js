@@ -22,6 +22,9 @@ router.get('/product', auth, UserController.product)
 router.get('/order', auth, UserController.order)
 router.get('/release', auth, UserController.release)
 router.get('/logout', UserController.logout)
+// chart
+router.get('/composistion/get', auth, UserController.getComposition)
+router.get('/order/get', auth, UserController.getOrders)
 
 // user authentication
 router.post('/register', AuthController.store)

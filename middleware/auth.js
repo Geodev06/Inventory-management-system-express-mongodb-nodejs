@@ -18,6 +18,7 @@ const auth = (req, res, next) => {
                 next()
             }
         })
+
     } else {
         res.redirect('/')
     }
@@ -40,7 +41,7 @@ const checkUser = (req, res, next) => {
             }
             else {
 
-                let user = await User.findById(decodedToken.id)
+                const user = await User.findById(decodedToken.id)
                 res.locals.user = user
                 next()
             }

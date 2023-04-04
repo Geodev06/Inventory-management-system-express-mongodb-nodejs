@@ -16,7 +16,7 @@
     <%- include('../partials/nav.ejs') -%>
     <script src="js/jquery-3.5.1.js"></script>
     <link rel="stylesheet" href="css/jquery-editable-select.css">
-    <script src="/js/jquery-editable-select.js"></script>
+    <script src="js/jquery-editable-select.js"></script>
 
     <div class="container">
         <div class="row">
@@ -217,7 +217,7 @@
 
                 setTimeout(()=> {
                   location.assign('/order')
-                }, 3000)
+                }, 1200)
             }
             if(data.errors){
                 customerError.textContent = data.errors.customer_name

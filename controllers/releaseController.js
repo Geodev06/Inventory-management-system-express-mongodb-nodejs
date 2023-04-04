@@ -2,6 +2,7 @@
 const Customer = require('../models/Customer')
 
 const Release = require('../models/Release')
+const Product = require('../models/Product')
 const Order = require('../models/Order')
 
 /**
@@ -71,6 +72,58 @@ const update = async (req, res) => {
             }
         })
 
+
+        const releases = await Release.find({}).sort({ createdAt: -1 })
+        const products = await Product.find({})
+
+        const orderedItem = []
+        const toUpdate = []
+
+        releases[0].items.forEach((item) => {
+            orderedItem.push(
+                {
+                    _id: item.product_id,
+                    quantity: item.quantity
+                }
+            )
+        })
+
+        for (let i = 0; i < orderedItem.length; i++) {
+            for (let j = 0; j < products.length; j++) {
+                if (orderedItem[i]._id == products[j]._id.toString()) {
+                    var item = {
+                        _id: orderedItem[i]._id,
+                        stock: parseInt(products[j].stock) - parseInt(orderedItem[i].quantity),
+                    }
+                    toUpdate.push(item)
+
+                }
+            }
+        }
+
+        const documents = toUpdate.map(obj => {
+            return {
+                updateOne: {
+                    filter: { _id: obj._id },
+                    update: { stock: obj.stock }
+                }
+            }
+        })
+
+        const updated = await Product.bulkWrite(documents, { ordered: false })
+
+
+        res.redirect('/release')
+    }
+    catch (err) {
+        console.log(err)
+    }
+
+}
+
+const destroy = async (req, res) => {
+    try {
+        const released = await Release.deleteOne({ _id: req.params.id })
         res.redirect('/release')
     }
     catch (err) {
@@ -78,20 +131,20 @@ const update = async (req, res) => {
     }
 }
 
-const destroy = async (req, res) => {
+const show = async (req, res) => {
     try {
-        const released = await Release.deleteOne({ _id: req.params.id })
-        res.redirect('/order')
-    }
-    catch (err) {
-        console.log(err)
+        const released = await Release.findOne({ _id: req.params.id })
+
+        res.render('pages/receipt', { released: released, title: released._id.toString() })
+    } catch (err) {
+        res.redirect('/notfound')
     }
 }
-
 
 
 module.exports = {
     store,
     update,
+    show,
     destroy
 }
