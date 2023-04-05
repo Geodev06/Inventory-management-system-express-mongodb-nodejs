@@ -4,7 +4,7 @@
 A simple inventory management system with barcode generation using mongoDB, express and nodejs. 
 
 
-## ðŸ›  Frameworks and libraries
+## 🛠️ Frameworks and libraries
 Express, jQuery, bootstrap 5 and chartJs.
 
 
@@ -77,5 +77,5 @@ Simple dashboard
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://choosealicense.com/licenses/mit/) 💪
 
