@@ -21,6 +21,10 @@ router.get('/customer', auth, UserController.customer)
 router.get('/product', auth, UserController.product)
 router.get('/order', auth, UserController.order)
 router.get('/release', auth, UserController.release)
+// profile
+router.get('/profile', auth, UserController.profile)
+router.post('/change-password/:id', auth, UserController.changePassword)
+// logout
 router.get('/logout', UserController.logout)
 // chart
 router.get('/composistion/get', auth, UserController.getComposition)

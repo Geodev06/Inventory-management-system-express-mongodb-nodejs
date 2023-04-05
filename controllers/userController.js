@@ -5,6 +5,10 @@ const Product = require('../models/Product')
 const Order = require('../models/Order')
 const Release = require('../models/Release')
 
+const User = require('../models/User')
+const bcrypt = require('bcrypt')
+const handleErrors = require('./handlers/userhandleErrors')
+
 // functions
 const login = (req, res) => {
     if (res.locals.user) {
@@ -137,6 +141,63 @@ const release = async (req, res) => {
         releasesCount: releasesCount
     })
 }
+
+const profile = async (req, res) => {
+
+    const releasesCount = await Release.find({ status: 0 }).sort({ createdAt: -1 }).count()
+    res.render('pages/profile', { title: 'Profile', releasesCount: releasesCount })
+}
+
+const changePassword = async (req, res, next) => {
+
+    try {
+
+        const { name, old_password, password, confirmed_password } = req.body
+
+        if (name == '') {
+            return res.status(401)
+                .json({ errors: { name: 'Name is required!' } })
+        }
+
+        if (password == '' && confirmed_password == '') {
+            return res.status(401)
+                .json({ errors: { password: 'Password is required!' } })
+        }
+
+        if (password != confirmed_password) {
+            return res.status(401)
+                .json({ errors: { password: 'Password does not match' } })
+        }
+
+        const user = await User.findOne({ _id: req.params.id })
+
+        const correct = await bcrypt.compare(old_password, user.password)
+
+        if (correct) {
+            const salt = await bcrypt.genSalt()
+            const newPassword = await bcrypt.hash(password, salt)
+            const success = await User.updateOne({ _id: req.params.id }, {
+                $set: {
+                    name: name,
+                    password: newPassword
+                }
+            })
+            return res.status(200)
+                .json({ success })
+
+        } else {
+            res.status(401)
+                .json({ errors: { old_password: 'Incorrect old password' } })
+        }
+
+    } catch (err) {
+
+        res.status(401)
+            .json({ err })
+    }
+
+}
+
 const logout = (req, res) => {
     res.cookie('jwt', '', { maxAge: 1 })
     res.redirect('/')
@@ -159,9 +220,9 @@ const getOrders = async (req, res) => {
         }
     })
 
-    console.log(released)
     res.json({ released })
 }
+
 module.exports = {
     login,
     register,
@@ -171,6 +232,8 @@ module.exports = {
     product,
     order,
     release,
+    profile,
+    changePassword,
     // chart
     getComposition,
     getOrders,
